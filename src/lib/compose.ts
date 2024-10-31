@@ -30,9 +30,9 @@ import success from './success.js';
  *   console.error(result.error);
  * }
  */
-const compose: (...stages: PipelineStage[]) => PipelineStage =
-	(...stages) =>
-	async (context: PipelineContext = {}): Promise<Result<PipelineContext>> => {
+const compose =
+	(...stages: PipelineStage[]): PipelineStage =>
+	async (context: PipelineContext): Promise<Result<PipelineContext>> => {
 		let currentContext = context;
 
 		for (const stage of stages) {

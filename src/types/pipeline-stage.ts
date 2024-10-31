@@ -21,6 +21,6 @@ import type { Result } from './result.js';
  *   return failure('Context is missing');
  * };
  */
-type PipelineStage = (context?: PipelineContext) => Promise<Result<PipelineContext>>;
+type PipelineStage = (context: PipelineContext) => Promise<Result<PipelineContext>>;
 
 export type { PipelineStage };

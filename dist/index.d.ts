@@ -137,6 +137,8 @@ declare class PipelineError extends Error {
  */
 declare const failure: <T>(error: unknown) => Result<T, PipelineError>;
 
+declare const resolve: <T, E>(result: Result<T, E>) => T;
+
 /**
  * Creates a successful result object.
  *
@@ -159,4 +161,4 @@ declare const failure: <T>(error: unknown) => Result<T, PipelineError>;
  */
 declare const success: <T>(value: T) => Result<T>;
 
-export { type PipelineContext, type PipelineStage, type Result, compose, failure, success };
+export { type PipelineContext, type PipelineStage, type Result, compose, failure, resolve, success };

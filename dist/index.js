@@ -36,6 +36,16 @@ var compose = (...stages) => async (context) => {
 };
 var compose_default = compose;
 
-export { compose_default as compose, failure, success_default as success };
+// src/lib/resolve.ts
+var resolve = (result) => {
+  if (result.ok) {
+    return result.value;
+  } else {
+    throw result.error;
+  }
+};
+var resolve_default = resolve;
+
+export { compose_default as compose, failure, resolve_default as resolve, success_default as success };
 //# sourceMappingURL=index.js.map
 //# sourceMappingURL=index.js.map

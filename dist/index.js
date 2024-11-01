@@ -18,7 +18,7 @@ var success = (value) => ({
 var success_default = success;
 
 // src/lib/compose.ts
-var compose = (...stages) => async (context = {}) => {
+var compose = (...stages) => async (context) => {
   let currentContext = context;
   for (const stage of stages) {
     try {

@@ -73,7 +73,7 @@ type Result<T, E = Error> = {
  *   return failure('Context is missing');
  * };
  */
-type PipelineStage = (context?: PipelineContext) => Promise<Result<PipelineContext>>;
+type PipelineStage = (context: PipelineContext) => Promise<Result<PipelineContext>>;
 
 /**
  * Composes multiple pipeline stages into a single pipeline function.

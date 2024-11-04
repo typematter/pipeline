@@ -18,13 +18,13 @@ var success = (value) => ({
 var success_default = success;
 
 // src/lib/compose.ts
-var compose = (...stages) => async (context) => {
-  let currentContext = context;
+var compose = (stages, { mutate } = {}) => async (context) => {
+  let currentContext = mutate === true ? context : structuredClone(context);
   for (const stage of stages) {
     try {
       const result = await stage(currentContext);
       if (result.ok) {
-        currentContext = result.value;
+        currentContext = mutate === true ? Object.assign(currentContext, result.value) : result.value;
       } else {
         return result;
       }

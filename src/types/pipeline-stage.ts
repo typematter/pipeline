@@ -2,25 +2,31 @@ import type { PipelineContext } from './pipeline-context.js';
 import type { Result } from './result.js';
 
 /**
- * Represents a stage in a pipeline.
+ * Represents a stage in a processing pipeline that operates on a context object
+ * and returns a Result indicating success or failure.
  *
- * A `PipelineStage` is a function that takes an optional `PipelineContext` object and returns a `Promise`
- * that resolves to a `Result` object. The `Result` object indicates whether the stage was successful or not.
- * If successful, the `Result` object contains the updated `PipelineContext` to be passed to the next stage.
+ * @template T - The specific PipelineContext type this stage operates on.
+ *              Defaults to the base PipelineContext if not specified.
  *
- * @template T - The type of the context object passed through the pipeline stages.
- * @param {PipelineContext} [context] - The context object passed to the stage.
- * @returns {Promise<Result<PipelineContext>>} A promise that resolves to a result object indicating the outcome of the stage.
+ * @param context - The pipeline context object containing the current state
+ * @returns A Promise that resolves to a Result containing either the modified context
+ *          or an error if the stage failed
  *
  * @example
- * // Define a pipeline stage that adds a property to the context
- * const stage: PipelineStage = async (context) => {
- *   if (context) {
- *     return success({ ...context, step1: true });
+ * ```typescript
+ * // Example pipeline stage that validates user data
+ * const validateUserStage: PipelineStage<UserContext> = async (context) => {
+ *   try {
+ *     // Validation logic here
+ *     return { ok: true, value: { ...context, isValid: true } };
+ *   } catch (error) {
+ *     return { ok: false, error };
  *   }
- *   return failure('Context is missing');
  * };
+ * ```
  */
-type PipelineStage = (context: PipelineContext) => Promise<Result<PipelineContext>>;
+type PipelineStage<T extends PipelineContext = PipelineContext> = (
+	context: T
+) => Promise<Result<T>>;
 
 export type { PipelineStage };

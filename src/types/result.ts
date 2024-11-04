@@ -1,24 +1,38 @@
 /**
- * Represents the result of an operation that can either succeed or fail.
+ * A discriminated union type representing either a successful or failed operation result.
+ * This type is used to handle errors in a type-safe way without throwing exceptions.
  *
- * The `Result` type is a discriminated union that can represent either a successful operation with a value
- * or a failed operation with an error. This type is useful for functions that can return either a success
- * or an error, providing a consistent way to handle both outcomes.
+ * @template T - The type of the success value
+ * @template E - The type of the error value, defaults to Error
  *
- * @template T - The type of the value in the case of a successful result.
- * @template E - The type of the error in the case of a failed result. Defaults to `Error`.
- *
- * @example
- * // A function that returns a successful result
- * function getSuccessResult(): Result<string> {
- *   return { ok: true, value: 'Success' };
- * }
+ * @property ok - Discriminant property indicating success (true) or failure (false)
+ * @property value - Present only when ok is true, contains the success value
+ * @property error - Present only when ok is false, contains the error value
  *
  * @example
- * // A function that returns a failed result
- * function getFailureResult(): Result<string> {
- *   return { ok: false, error: new Error('Failure') };
+ * ```typescript
+ * // Success case
+ * const successResult: Result<number> = {
+ *   ok: true,
+ *   value: 42
+ * };
+ *
+ * // Error case
+ * const errorResult: Result<number> = {
+ *   ok: false,
+ *   error: new Error('Calculation failed')
+ * };
+ *
+ * // Using with custom error type
+ * interface ValidationError {
+ *   code: string;
+ *   message: string;
  * }
+ * const validationResult: Result<string, ValidationError> = {
+ *   ok: false,
+ *   error: { code: 'INVALID_INPUT', message: 'Input too short' }
+ * };
+ * ```
  */
 type Result<T, E = Error> =
 	| {
@@ -29,5 +43,4 @@ type Result<T, E = Error> =
 			ok: false;
 			error: E;
 	  };
-
 export type { Result };

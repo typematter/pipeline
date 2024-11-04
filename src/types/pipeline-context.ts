@@ -1,26 +1,18 @@
 /**
- * Represents the context object passed through each stage of the pipeline.
- *
- * The `PipelineContext` interface is used to define the shape of the context object that is passed
- * through each stage of the pipeline. This context object can be extended with additional properties
- * as needed by different pipeline stages.
+ * Represents the context object passed through a pipeline's stages.
+ * This is a flexible record type that can store any key-value pairs needed
+ * during pipeline execution.
  *
  * @example
- * // Extending the PipelineContext with additional properties
- * interface ExtendedPipelineContext extends PipelineContext {
- *   step1: boolean;
- *   step2: boolean;
- * }
- *
- * // Using the extended context in a pipeline stage
- * const stage: PipelineStage = async (context: ExtendedPipelineContext) => {
- *   if (context.step1) {
- *     return success({ ...context, step2: true });
- *   }
- *   return failure('Step 1 not completed');
+ * ```typescript
+ * // Example pipeline context with user and processing data
+ * type UserProcessingContext = PipelineContext & {
+ *   userId: string;
+ *   processingStartTime: Date;
+ *   validationResults?: boolean;
  * };
+ * ```
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-interface PipelineContext {}
+type PipelineContext = Record<string, unknown>;
 
 export type { PipelineContext };

@@ -1,7 +1,19 @@
 import type { Result } from '$types/result.js';
 
 /**
- * Custom error class for pipeline errors.
+ * Custom error class for pipeline-specific errors.
+ * Extends the standard `Error` class to provide pipeline-specific error handling.
+ *
+ * @example
+ * ```typescript
+ * // Direct usage
+ * throw new PipelineError('Data validation failed');
+ *
+ * // Checking error type
+ * if (error instanceof PipelineError) {
+ *   // Handle pipeline-specific error
+ * }
+ * ```
  */
 class PipelineError extends Error {
 	constructor(message: string) {
@@ -11,30 +23,54 @@ class PipelineError extends Error {
 }
 
 /**
- * Creates a failure result object.
+ * Creates a failure `Result` object, standardizing error handling within the pipeline.
+ * This utility function ensures all errors are properly wrapped in a `PipelineError`
+ * and converted to a failure Result.
  *
- * This function is used to wrap an error in a `Result` object indicating a failed operation.
- * The resulting object will have the `ok` property set to `false` and the `error` property set to the provided error.
- * If the provided error is not an instance of `PipelineError`, it will be wrapped in a `PipelineError`.
+ * The function handles three types of error inputs:
+ * 1. `PipelineError` instances (passed through as-is)
+ * 2. Standard `Error` instances (message is extracted and wrapped in `PipelineError`)
+ * 3. Any other value (converted to string and wrapped in `PipelineError`)
  *
- * @template T - The type of the value that would have been returned on success.
- * @param {unknown} error - The error to wrap in a failure result.
- * @returns {Result<T, PipelineError>} An object representing a failure result containing the provided error.
- *
- * @example
- * // Creating a failure result with a custom error
- * const result = failure(new PipelineError('Something went wrong'));
- * console.log(result); // { ok: false, error: PipelineError: Something went wrong }
+ * @template T - The type parameter of the `Result` (unused in failure case but required for type compatibility)
+ * @param error - The error value to wrap. Can be any type, but will be converted to `PipelineError`.
+ * @returns A `Result` object with `ok: false` and a `PipelineError`
  *
  * @example
- * // Creating a failure result with a generic error
- * const result = failure(new Error('Generic error'));
- * console.log(result); // { ok: false, error: PipelineError: Generic error }
+ * // With PipelineError
+ * const result1 = failure(new PipelineError('Pipeline stage failed'));
+ * // Result<T, PipelineError> with original PipelineError
  *
  * @example
- * // Creating a failure result with a string error
- * const result = failure('String error');
- * console.log(result); // { ok: false, error: PipelineError: String error }
+ * // With standard Error
+ * const result2 = failure(new Error('Something went wrong'));
+ * // Result<T, PipelineError> with message "Something went wrong"
+ *
+ * @example
+ * // With string
+ * const result3 = failure('Invalid input');
+ * // Result<T, PipelineError> with message "Invalid input"
+ *
+ * @example
+ * // Usage in pipeline stage
+ * const processDataStage: PipelineStage<DataContext> = async (context) => {
+ *   try {
+ *     // Processing logic
+ *     return success({ ...context, processed: true });
+ *   } catch (error) {
+ *     return failure(error);
+ *   }
+ * };
+ *
+ * @example
+ * // Using with custom error handling
+ * const handleError = (error: unknown) => {
+ *   console.error('Pipeline failed:', error);
+ *   return failure(error);
+ * };
+ *
+ * @see {@link Result} - The Result type this function creates
+ * @see {@link PipelineError} - The custom error class used for standardization
  */
 const failure = <T>(error: unknown): Result<T, PipelineError> => ({
 	ok: false,

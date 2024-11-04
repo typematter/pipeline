@@ -1,24 +1,44 @@
 import type { Result } from '$types/result.js';
 
 /**
- * Creates a successful result object.
+ * Creates a successful `Result` object containing a value.
+ * This is a utility function to create the success case of a `Result` type in
+ * a more concise and type-safe way.
  *
- * This function is used to wrap a value in a `Result` object indicating a successful operation.
- * The resulting object will have the `ok` property set to `true` and the `value` property set to the provided value.
- *
- * @template T - The type of the value being wrapped.
- * @param {T} value - The value to wrap in a successful result.
- * @returns {Result<T>} An object representing a successful result containing the provided value.
- *
- * @example
- * // Creating a successful result with a string value
- * const result = success('Operation completed successfully');
- * console.log(result); // { ok: true, value: 'Operation completed successfully' }
+ * @template T - The type of the success value
+ * @param value - The value to wrap in a successful `Result` object
+ * @returns A `Result` object with `ok: true` and the provided value
  *
  * @example
- * // Creating a successful result with an object value
- * const result = success({ id: 1, name: 'John Doe' });
- * console.log(result); // { ok: true, value: { id: 1, name: 'John Doe' } }
+ * // Basic usage
+ * const numberResult = success(42);
+ * // Type: Result<number> = { ok: true, value: 42 }
+ *
+ * @example
+ * // With complex types
+ * interface UserData {
+ *   id: string;
+ *   name: string;
+ * }
+ *
+ * const userData = success({
+ *   id: "42",
+ *   name: "Alice"
+ * });
+ * // Type: Result<UserData>
+ *
+ * @example
+ * // Using in async functions
+ * async function fetchUser(id: string): Promise<Result<UserData>> {
+ *   try {
+ *     const user = await db.users.find(id);
+ *     return success(user);
+ *   } catch (error) {
+ *     return failure(error);
+ *   }
+ * }
+ *
+ * @see {@link Result} - The Result type this function creates
  */
 const success = <T>(value: T): Result<T> => ({
 	ok: true,

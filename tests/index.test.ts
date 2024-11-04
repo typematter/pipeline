@@ -12,7 +12,7 @@ describe('compose', () => {
 		value: { ...context, stage2: true }
 	});
 
-	const pipeline = compose(stage1, stage2);
+	const pipeline = compose([stage1, stage2]);
 
 	it('should execute all stages', async () => {
 		const context = await pipeline({});

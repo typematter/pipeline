@@ -29,6 +29,8 @@ To install the library, use `pnpm`:
 pnpm install typematter/pipeline
 ```
 
+NPM package coming soon!
+
 ## Usage
 
 Here's a basic example of how to use the pipeline library:
@@ -36,10 +38,12 @@ Here's a basic example of how to use the pipeline library:
 ```typescript
 import { compose, success, failure, PipelineStage, PipelineContext } from '@typematter/pipeline';
 
-// Define some pipeline stages
-const stage1: PipelineStage = async (context) => success({ ...context, step1: true });
+type Context = { step1?: boolean; step2?: boolean };
 
-const stage2: PipelineStage = async (context) => success({ ...context, step2: true });
+// Define some pipeline stages
+const stage1: PipelineStage<Context> = async (context) => success({ ...context, step1: true });
+
+const stage2: PipelineStage<Context> = async (context) => success({ ...context, step2: true });
 
 // Compose the stages into a single pipeline
 const pipeline = compose(stage1, stage2);
@@ -68,20 +72,20 @@ type Result<T, E = Error> = { ok: true; value: T } | { ok: false; error: E };
 
 #### `PipelineStage`
 
-A function that represents a stage in a pipeline. Takes a context object and returns a Promise of a Result.
+A function that represents a stage in a pipeline. Takes a context object and returns a `Promise` of a `Result`.
 
 ```typescript
-type PipelineStage = (context?: PipelineContext) => Promise<Result<PipelineContext>>;
+type PipelineStage<T extends PipelineContext = PipelineContext> = (
+	context: T
+) => Promise<Result<T>>;
 ```
 
 #### `PipelineContext`
 
-The context object passed through each stage of the pipeline. Can be extended with custom properties.
+The base context object passed through each stage of the pipeline. Can be extended with custom properties.
 
 ```typescript
-interface PipelineContext {
-	[key: string]: unknown;
-}
+type PipelineContext = Record<string, unknown>;
 ```
 
 ### Functions
